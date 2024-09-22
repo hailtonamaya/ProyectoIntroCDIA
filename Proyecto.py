@@ -12,8 +12,9 @@ class niveles:
         self.precioRenovacion2 = 0
         self.precioRenovacion5 = 0
         self.activo = False
+        self.vencida = False
 
-    def __init__(self, tipo, descripcion, precioPrimeraVez2, precioPrimeraVez5, precioRenovacion2, precioRenovacion5, activo):
+    def __init__(self, tipo, descripcion, precioPrimeraVez2, precioPrimeraVez5, precioRenovacion2, precioRenovacion5, activo, vencida):
         self.tipo = tipo
         self.descripcion = descripcion
         self.precioPrimeraVez2 = precioPrimeraVez2
@@ -21,6 +22,7 @@ class niveles:
         self.precioRenovacion2 = precioRenovacion2
         self.precioRenovacion5 = precioRenovacion5
         self.activo = activo
+        self.vencida = vencida
 
     def setTipo(self, tipo):
         self.tipo = tipo
@@ -63,6 +65,12 @@ class niveles:
 
     def getActivo(self):
         return self.activo
+    
+    def setVencida(self, vencida):
+        self.vencida = vencida
+
+    def getVencida(self):
+        return self.vencida
 
     def Imprimir(self):
         print("Tipo: ", self.tipo)
@@ -71,12 +79,18 @@ class niveles:
         print("Precio Primera Vez 5 años: L.", self.precioPrimeraVez5)
         print("Precio Renovacion 2 años: L.", self.precioRenovacion2)
         print("Precio Renovacion 5 años: L.", self.precioRenovacion5)
+        print("Activo: ", self.activo)
+        print("Vencida: ", self.vencida ,"\n")
 
     def ImprimirActivo(self):
         if self.activo:
             print("Tipo: ", self.tipo)
-            print("Descripcion: ", self.descripcion ,"\n")
-   
+            print("Descripcion: ", self.descripcion)
+            if self.getVencida():
+                print("Su licencia NO esta vigente!\n")
+            else:
+                print("Su licencia esta vigente!\n")
+
 class persona:
     def __init__(self):
         self.nombre = ""
@@ -136,7 +150,6 @@ class Main:
     def press():
         print("Presione cualquier tecla para continuar...")
         msvcrt.getch()
-
     os.system('clear')
         
     Niveles = []
@@ -150,8 +163,13 @@ class Main:
     file.close()        
     
     #Niveles[0].setActivo(True)
+    #Niveles[0].setVencida(False)
     #Niveles[1].setActivo(True)
     #Personas.append(persona("Hailton Amaya", "18", "0501200500100", False, Niveles))
+
+    #Niveles[0].setActivo(False)
+    #Niveles[0].setVencida(False)
+    #Personas.append(persona("Carlos Aguilar", "18", "0501200525258", False, Niveles))
 
     TiposAplica = []
     Menu = Opcion = str("")
@@ -161,14 +179,26 @@ class Main:
     esValido = False
     print("****Bienvenido al DNVT para la Solicitud de la Licencia de Conducir****")
 
-    while Menu != "C":
-        Menu = input("A.-> Ingresar Datos o Solicitar Nueva Licencia\nB.-> Ver mi informacion\nC.-> Salir\nSeleccion una opcion: ").capitalize()
+    while Menu != "D":
+        Menu = input("A.-> Ingresar Datos o Solicitar Nueva Licencia\nB.-> Renovacion de Licencia\nC.-> Ver mi informacion\nD.-> Salir\nSeleccion una opcion: ").capitalize()
         os.system('clear')
 
         if Menu == "A":
             nombre = input("Ingrese su nombre: ")
-            edad = int(input("Ingrese su edad: "))
+            try:
+                edad = int(input("Ingrese su edad: "))
+            except ValueError:
+                print("Edad invalida. Por favor, ingrese un numero.")
+                press()
+                os.system('clear')
+                continue
+
             DNI = input("Ingrese su DNI(Sin guiones): ")
+            if not DNI.isdigit():
+                print("DNI invalido. Por favor, ingrese solo numeros.")
+                press()
+                os.system('clear')
+                continue
             os.system('clear')
             
             # Verificar si ya existe la persona en la base de datos
@@ -330,8 +360,101 @@ class Main:
                         press()
 
         elif Menu == "B":
-
             DNI = input("Ingrese su DNI(Sin guiones): ")
+            if not DNI.isdigit():
+                print("DNI invalido. Por favor, ingrese solo numeros.")
+                press()
+                os.system('clear')
+                continue
+            os.system('clear')
+
+            # Verificar si ya existe la persona en la base de datos
+            for p in Personas:
+                if p.getDNI() == DNI:
+                    personaActual = p
+                    break
+
+            if personaActual != None:
+                print("Bienvenido ", personaActual.getNombre())
+                print("A continuacion se muestra las licencias que necesitan renovacion: ")
+                for nivel in personaActual.getNiveles():
+                    if nivel.getActivo() == True:
+                        if nivel.getVencida() == True:
+                            TiposAplica.append(nivel.getTipo())
+                            print("Tipo: ", nivel.getTipo())
+                            print("Descripcion: ", nivel.getDescripcion())
+                        
+                if len(TiposAplica) == 0:
+                    print("No necesita renovar ninguna licencia")
+                    press()
+                else:
+                    nivel = personaActual.getNiveles()
+                    print("Escriba el tipo de licencia a renovar(" , end="")
+                    for i in range(len(TiposAplica)):
+                        print(TiposAplica[i], end="")
+                        if i < len(TiposAplica) - 1:
+                            print("/" , end="")
+                    opcion = input("): ").capitalize()
+                    os.system('clear')
+
+                    for t in TiposAplica:
+                        if t == opcion:
+                            esValido = True
+                            break
+                    
+                    #Cargar tipo de licencia a obtener
+                    for i in range(len(nivel)):
+                        if nivel[i].getTipo() == opcion:
+                            licenciaAObtener = nivel[i]
+                            break
+                    if esValido:
+                        print("A.-> Renovacion 2 años L.", licenciaAObtener.getPrecioRenovacion2()) 
+                        print("B.-> Renovacion 5 años L.", licenciaAObtener.getPrecioRenovacion5())
+                        opcion = input("Seleccione una opcion(A/B): ").capitalize()
+                        os.system('clear')
+
+                        if opcion == "A":
+                            print("Estamos verficando su informacion...")
+                            for nivel in personaActual.getNiveles():
+                                if nivel.getTipo() == licenciaAObtener.getTipo():
+                                    nivel.setVencida(False)
+                                    break
+                            for P in Personas:
+                                if P.getDNI() == DNI:
+                                    P = personaActual
+                                    break
+                            print("Felicidades, usted ha renovado su licencia Tipo " , licenciaAObtener.getTipo(), " por 2 años!!!")
+                            press()
+                            #Cargar nueva informacion en el archivo    
+                            with open("Personas.pr", "wb") as file:
+                                pickle.dump(Personas, file)
+                            file.close()
+                        elif opcion == "B":
+                            print("Estamos verficando su informacion...")
+                            for nivel in personaActual.getNiveles():
+                                if nivel.getTipo() == licenciaAObtener.getTipo():
+                                    nivel.setVencida(False)
+                                    break
+                            for P in Personas:
+                                if P.getDNI() == DNI:
+                                    P = personaActual
+                                    break
+                            print("Felicidades, usted ha renovado su licencia Tipo ", licenciaAObtener.getTipo(), " por 5 años!!!")
+                            press()
+                            #Cargar nueva informacion en el archivo
+                    else:
+                        print("La opcion que ingreso no es valida!")
+                        press()
+            else:
+                print("Usted ha ingresado un DNI invalido o es la primera vez que solicita una licencia!")
+                press()
+        elif Menu == "C":
+            DNI = input("Ingrese su DNI(Sin guiones): ")
+            if not DNI.isdigit():
+                print("DNI invalido. Por favor, ingrese solo numeros.")
+                press()
+                os.system('clear')
+                continue
             os.system('clear')
 
             # Verificar si ya existe la persona en la base de datos
@@ -347,10 +470,15 @@ class Main:
                 print("Usted ha ingresado un DNI invalido o es la primera vez que solicita una licencia!")
             press()
 
+        elif Menu == "D":
+            print("Gracias por usar nuestro servicio!!!")
+            press()
+        
+        else:
+            print("Opcion no valida!!!")
+            press()
 
-            #Reiniciar valores y Limpiar Pantalla
-        
-        
+        #Reiniciar valores y Limpiar Pantalla
         TiposAplica = []
         personaActual = None
         nivel = None
