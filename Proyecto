@@ -131,7 +131,7 @@ class Main:
     Niveles = []
     with open('Niveles.nv', 'rb') as file:
         Niveles = pickle.load(file)
-    file.close()
+    file.close() 
 
     Personas = []   
     with open("Personas.pr", "rb") as file:
@@ -142,9 +142,7 @@ class Main:
     #Niveles[0].setActivo(True)
     #Niveles[1].setActivo(True)
     #Personas.append(persona("Hailton Amaya", "18", "0501200500100", False, Niveles))
- 
-   
-
+    TiposAplica = []
     Menu = Opcion = str("")
     personaActual = None
     nivel = None
@@ -171,29 +169,34 @@ class Main:
 
             print("Usted aplica a las siguientes opciones:")
             if personaActual.getEsPrimeravez():
-                print("Opcion#1")
                 Niveles[0].Imprimir()
                 print("")
 
-                print("Opcion#2")
                 Niveles[1].Imprimir()
                 print("")
-                opcion = int(input("Seleccione una opcion: "))
+                opcion = input("Seleccione una opcion(A/B): ").capitalize()
 
-                if opcion == 1:
-                    personaActual.getNiveles()[0].Imprimir()
-                elif opcion == 2:
-                    personaActual.getNiveles()[1].Imprimir()
-                else:
-                    print("Opcion no valida")
             else:
                 nivel = personaActual.getNiveles()
                 for i in range(len(nivel)):
                     if nivel[i].getActivo() == False:
-                        print("Opcion#",(i+1))
+                        TiposAplica.append(nivel[i].getTipo())
                         nivel[i].Imprimir()
                         print("")
-                    print("")
-                
 
-            
+                if len(TiposAplica) == 0:
+                    print("No aplica a ningun nivel")
+                else:
+                    print("Seleccione una opcion(" , end="")
+                    for i in range(len(TiposAplica)):
+                        print(TiposAplica[i], end="")
+                        if i < len(TiposAplica) - 1:
+                            print("/" , end="")
+                    opcion = input("): ").capitalize()
+
+            #Reiniciar valores y Limpiar Pantalla
+            TiposAplica = []
+            personaActual = None
+            nivel = None
+            os.system('clear')
+                                
