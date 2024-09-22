@@ -12,13 +12,14 @@ class niveles:
         self.precioRenovacion5 = 0
         self.activo = False
 
-    def __init(self, tipo, descripcion, precioPrimeraVez2, precioPrimeraVez5, precioRenovacion2, precioRenovacion5):
+    def __init__(self, tipo, descripcion, precioPrimeraVez2, precioPrimeraVez5, precioRenovacion2, precioRenovacion5, activo):
         self.tipo = tipo
         self.descripcion = descripcion
         self.precioPrimeraVez2 = precioPrimeraVez2
         self.precioPrimeraVez5 = precioPrimeraVez5
         self.precioRenovacion2 = precioRenovacion2
         self.precioRenovacion5 = precioRenovacion5
+        self.activo = activo
 
     def setTipo(self, tipo):
         self.tipo = tipo
@@ -58,6 +59,17 @@ class niveles:
     
     def setActivo(self, activo):
         self.activo = activo
+
+    def getActivo(self):
+        return self.activo
+
+    def Imprimir(self):
+        print("Tipo: ", self.tipo)
+        print("Descripcion: ", self.descripcion)
+        print("Precio Primera Vez 2 años: ", self.precioPrimeraVez2)
+        print("Precio Primera Vez 5 años: ", self.precioPrimeraVez5)
+        print("Precio Renovacion 2 años: ", self.precioRenovacion2)
+        print("Precio Renovacion 5 años: ", self.precioRenovacion5)
     
 class persona:
     def __init__(self):
@@ -103,3 +115,85 @@ class persona:
 
     def getNiveles(self):
         return self.niveles
+    
+    def Imprimir(self):
+        print("Nombre: ", self.nombre)
+        print("Edad: ", self.edad)
+        print("DNI: ", self.DNI)
+        print("Es Primera Vez: ", self.esPrimeravez)
+        print("Niveles: ")
+        for nivel in self.niveles:
+            nivel.Imprimir()
+            print("")
+
+#Programa Princiapl
+class Main:
+    Niveles = []
+    with open('Niveles.nv', 'rb') as file:
+        Niveles = pickle.load(file)
+    file.close()
+
+    Personas = []   
+    with open("Personas.pr", "rb") as file:
+        Personas = pickle.load(file)
+    file.close()
+    
+    
+    #Niveles[0].setActivo(True)
+    #Niveles[1].setActivo(True)
+    #Personas.append(persona("Hailton Amaya", "18", "0501200500100", False, Niveles))
+ 
+   
+
+    Menu = Opcion = str("")
+    personaActual = None
+    nivel = None
+    print("****Bienvenido al DNVT para la Solicitud de la Licencia de Conducir****")
+
+    while Menu != "B":
+        Menu = input("A.-> Ingresar Datos\nB.-> Salir\n").capitalize()
+        os.system('clear')
+
+        if Menu == "A":
+            nombre = input("Ingrese su nombre: ")
+            edad = int(input("Ingrese su edad: "))
+            DNI = input("Ingrese su DNI(Sin guiones): ")
+            
+            # Verificar si ya existe la persona en la base de datos
+            for p in Personas:
+                if p.getDNI() == DNI:
+                    personaActual = p
+                    break
+
+            if personaActual == None:
+                personaActual = persona(nombre, edad, DNI, True, Niveles)
+                Personas.append(personaActual)
+
+            print("Usted aplica a las siguientes opciones:")
+            if personaActual.getEsPrimeravez():
+                print("Opcion#1")
+                Niveles[0].Imprimir()
+                print("")
+
+                print("Opcion#2")
+                Niveles[1].Imprimir()
+                print("")
+                opcion = int(input("Seleccione una opcion: "))
+
+                if opcion == 1:
+                    personaActual.getNiveles()[0].Imprimir()
+                elif opcion == 2:
+                    personaActual.getNiveles()[1].Imprimir()
+                else:
+                    print("Opcion no valida")
+            else:
+                nivel = personaActual.getNiveles()
+                for i in range(len(nivel)):
+                    if nivel[i].getActivo() == False:
+                        print("Opcion#",(i+1))
+                        nivel[i].Imprimir()
+                        print("")
+                    print("")
+                
+
+            
