@@ -1,5 +1,6 @@
 import os
 import pickle
+import msvcrt
 
 #Definicion de la Clase
 class niveles:
@@ -66,11 +67,16 @@ class niveles:
     def Imprimir(self):
         print("Tipo: ", self.tipo)
         print("Descripcion: ", self.descripcion)
-        print("Precio Primera Vez 2 años: ", self.precioPrimeraVez2)
-        print("Precio Primera Vez 5 años: ", self.precioPrimeraVez5)
-        print("Precio Renovacion 2 años: ", self.precioRenovacion2)
-        print("Precio Renovacion 5 años: ", self.precioRenovacion5)
-    
+        print("Precio Primera Vez 2 años: L.", self.precioPrimeraVez2)
+        print("Precio Primera Vez 5 años: L.", self.precioPrimeraVez5)
+        print("Precio Renovacion 2 años: L.", self.precioRenovacion2)
+        print("Precio Renovacion 5 años: L.", self.precioRenovacion5)
+
+    def ImprimirActivo(self):
+        if self.activo:
+            print("Tipo: ", self.tipo)
+            print("Descripcion: ", self.descripcion ,"\n")
+   
 class persona:
     def __init__(self):
         self.nombre = ""
@@ -120,14 +126,19 @@ class persona:
         print("Nombre: ", self.nombre)
         print("Edad: ", self.edad)
         print("DNI: ", self.DNI)
-        print("Es Primera Vez: ", self.esPrimeravez)
-        print("Niveles: ")
+        print("Es Primera Vez: ", self.esPrimeravez , "\n")
+        print("Usted cuenta con las siguientes licencias: ")
         for nivel in self.niveles:
-            nivel.Imprimir()
-            print("")
+                nivel.ImprimirActivo()
 
 #Programa Princiapl
 class Main:
+    def press():
+        print("Presione cualquier tecla para continuar...")
+        msvcrt.getch()
+
+    os.system('clear')
+        
     Niveles = []
     with open('Niveles.nv', 'rb') as file:
         Niveles = pickle.load(file)
@@ -136,26 +147,29 @@ class Main:
     Personas = []   
     with open("Personas.pr", "rb") as file:
         Personas = pickle.load(file)
-    file.close()
-    
+    file.close()        
     
     #Niveles[0].setActivo(True)
     #Niveles[1].setActivo(True)
     #Personas.append(persona("Hailton Amaya", "18", "0501200500100", False, Niveles))
+
     TiposAplica = []
     Menu = Opcion = str("")
     personaActual = None
     nivel = None
+    licenciaAObtener = None
+    esValido = False
     print("****Bienvenido al DNVT para la Solicitud de la Licencia de Conducir****")
 
-    while Menu != "B":
-        Menu = input("A.-> Ingresar Datos\nB.-> Salir\n").capitalize()
+    while Menu != "C":
+        Menu = input("A.-> Ingresar Datos o Solicitar Nueva Licencia\nB.-> Ver mi informacion\nC.-> Salir\nSeleccion una opcion: ").capitalize()
         os.system('clear')
 
         if Menu == "A":
             nombre = input("Ingrese su nombre: ")
             edad = int(input("Ingrese su edad: "))
             DNI = input("Ingrese su DNI(Sin guiones): ")
+            os.system('clear')
             
             # Verificar si ya existe la persona en la base de datos
             for p in Personas:
@@ -163,20 +177,84 @@ class Main:
                     personaActual = p
                     break
 
-            if personaActual == None:
+            if edad < 18:
+                print("Usted no puede solicitar una licencia de conducir porque es menor de edad!!!")
+                press()
+            elif personaActual == None:
                 personaActual = persona(nombre, edad, DNI, True, Niveles)
                 Personas.append(personaActual)
+                nivel = personaActual.getNiveles()
 
-            print("Usted aplica a las siguientes opciones:")
-            if personaActual.getEsPrimeravez():
-                Niveles[0].Imprimir()
-                print("")
+                print("Usted aplica a las siguientes opciones:")
+                if personaActual.getEsPrimeravez():
+                    Niveles[0].Imprimir()
+                    print("")
 
-                Niveles[1].Imprimir()
-                print("")
-                opcion = input("Seleccione una opcion(A/B): ").capitalize()
+                    Niveles[1].Imprimir()
+                    print("")
 
+                    TiposAplica.append(Niveles[0].getTipo())
+                    TiposAplica.append(Niveles[1].getTipo())
+
+                    opcion = input("Seleccione una opcion(A/B): ").capitalize()
+                    os.system('clear')
+
+                    for t in TiposAplica:
+                        if t == opcion:
+                            esValido = True
+                            break
+                    
+                    #Cargar tipo de licencia a obtener
+                    for i in range(len(nivel)):
+                        if nivel[i].getTipo() == opcion:
+                            licenciaAObtener = nivel[i]
+                            break
+                    if esValido:
+                        print("A.-> Primera Vez 2 años L.", licenciaAObtener.getPrecioPrimeraVez2()) 
+                        print("B.-> Primera Vez 5 años L.", licenciaAObtener.getPrecioPrimeraVez5())
+                        opcion = input("Seleccione una opcion(A/B): ").capitalize()
+                        os.system('clear')
+
+                        if opcion == "A":
+                            print("Estamos verficando su informacion...")
+                            for nivel in personaActual.getNiveles():
+                                if nivel.getTipo() == licenciaAObtener.getTipo():
+                                    nivel.setActivo(True)
+                                    break
+                            for P in Personas:
+                                if P.getDNI() == DNI:
+                                    P = personaActual
+                                    break
+                            print("Felicidades, usted ha obtenido su licencia Tipo " , licenciaAObtener.getTipo(), " por 2 años!!!")
+                            press()
+                            #Cargar nueva informacion en el archivo    
+                            with open("Personas.pr", "wb") as file:
+                                pickle.dump(Personas, file)
+                            file.close()
+                        elif opcion == "B":
+                            print("Estamos verficando su informacion...")
+                            for nivel in personaActual.getNiveles():
+                                if nivel.getTipo() == licenciaAObtener.getTipo():
+                                    nivel.setActivo(True)
+                                    break
+                            for P in Personas:
+                                if P.getDNI() == DNI:
+                                    P = personaActual
+                                    break
+                            print("Felicidades, usted ha obtenido su licencia Tipo ", licenciaAObtener.getTipo(), " por 5 años!!!")
+                            press()
+                            #Cargar nueva informacion en el archivo    
+                            with open("Personas.pr", "wb") as file:
+                                pickle.dump(Personas, file)
+                            file.close()
+                        else:
+                            print("Opcion no valida!!!")
+                            press()
+                    else:
+                        print("Usted seleccion un tipo de licencia invalida!!!")
+                        press()
             else:
+                #Cargar informacion de los tipos de licencia que tiene la persona
                 nivel = personaActual.getNiveles()
                 for i in range(len(nivel)):
                     if nivel[i].getActivo() == False:
@@ -186,6 +264,7 @@ class Main:
 
                 if len(TiposAplica) == 0:
                     print("No aplica a ningun nivel")
+                    press()
                 else:
                     print("Seleccione una opcion(" , end="")
                     for i in range(len(TiposAplica)):
@@ -193,10 +272,88 @@ class Main:
                         if i < len(TiposAplica) - 1:
                             print("/" , end="")
                     opcion = input("): ").capitalize()
+                    os.system('clear')
+
+                    for t in TiposAplica:
+                        if t == opcion:
+                            esValido = True
+                            break
+                    
+                    #Cargar tipo de licencia a obtener
+                    for i in range(len(nivel)):
+                        if nivel[i].getTipo() == opcion:
+                            licenciaAObtener = nivel[i]
+                            break
+                    if esValido:
+                        print("A.-> Primera Vez 2 años L.", licenciaAObtener.getPrecioPrimeraVez2()) 
+                        print("B.-> Primera Vez 5 años L.", licenciaAObtener.getPrecioPrimeraVez5())
+                        opcion = input("Seleccione una opcion(A/B): ").capitalize()
+                        os.system('clear')
+
+                        if opcion == "A":
+                            print("Estamos verficando su informacion...")
+                            for nivel in personaActual.getNiveles():
+                                if nivel.getTipo() == licenciaAObtener.getTipo():
+                                    nivel.setActivo(True)
+                                    break
+                            for P in Personas:
+                                if P.getDNI() == DNI:
+                                    P = personaActual
+                                    break
+                            print("Felicidades, usted ha obtenido su licencia Tipo " , licenciaAObtener.getTipo(), " por 2 años!!!")
+                            press()
+                            #Cargar nueva informacion en el archivo    
+                            with open("Personas.pr", "wb") as file:
+                                pickle.dump(Personas, file)
+                            file.close()
+                        elif opcion == "B":
+                            print("Estamos verficando su informacion...")
+                            for nivel in personaActual.getNiveles():
+                                if nivel.getTipo() == licenciaAObtener.getTipo():
+                                    nivel.setActivo(True)
+                                    break
+                            for P in Personas:
+                                if P.getDNI() == DNI:
+                                    P = personaActual
+                                    break
+                            print("Felicidades, usted ha obtenido su licencia Tipo ", licenciaAObtener.getTipo(), " por 5 años!!!")
+                            press()
+                            #Cargar nueva informacion en el archivo    
+                            with open("Personas.pr", "wb") as file:
+                                pickle.dump(Personas, file)
+                            file.close()
+                        else:
+                            print("Opcion no valida!!!")
+                            press()
+                    else:
+                        print("Usted seleccion un tipo de licencia invalida!!!")
+                        press()
+
+        elif Menu == "B":
+
+            DNI = input("Ingrese su DNI(Sin guiones): ")
+            os.system('clear')
+
+            # Verificar si ya existe la persona en la base de datos
+            for p in Personas:
+                if p.getDNI() == DNI:
+                    personaActual = p
+                    break
+
+            if personaActual != None:
+                print("****Informacion de la Persona****")
+                personaActual.Imprimir()
+            else:
+                print("Usted ha ingresado un DNI invalido o es la primera vez que solicita una licencia!")
+            press()
+
 
             #Reiniciar valores y Limpiar Pantalla
-            TiposAplica = []
-            personaActual = None
-            nivel = None
-            os.system('clear')
+        
+        
+        TiposAplica = []
+        personaActual = None
+        nivel = None
+        esValido = False
+        os.system('clear')
                                 
