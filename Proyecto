@@ -1,0 +1,105 @@
+import os
+import pickle
+
+#Definicion de la Clase
+class niveles:
+    def __init__(self):
+        self.tipo = ""
+        self.descripcion = ""
+        self.precioPrimeraVez2 = 0 #El numero indica la cantidad de años
+        self.precioPrimeraVez5 = 0
+        self.precioRenovacion2 = 0
+        self.precioRenovacion5 = 0
+        self.activo = False
+
+    def __init(self, tipo, descripcion, precioPrimeraVez2, precioPrimeraVez5, precioRenovacion2, precioRenovacion5):
+        self.tipo = tipo
+        self.descripcion = descripcion
+        self.precioPrimeraVez2 = precioPrimeraVez2
+        self.precioPrimeraVez5 = precioPrimeraVez5
+        self.precioRenovacion2 = precioRenovacion2
+        self.precioRenovacion5 = precioRenovacion5
+
+    def setTipo(self, tipo):
+        self.tipo = tipo
+
+    def getTipo(self):
+        return self.tipo
+    
+    def setDescripcion(self, descripcion):
+        self.descripcion = descripcion
+
+    def getDescripcion(self):
+        return self.descripcion
+    
+    def setPrecioPrimeraVez2(self, precioPrimeraVez2):
+        self.precioPrimeraVez2 = precioPrimeraVez2
+
+    def getPrecioPrimeraVez2(self):
+        return self.precioPrimeraVez2
+    
+    def setPrecioPrimeraVez5(self, precioPrimeraVez5):
+        self.precioPrimeraVez5 = precioPrimeraVez5
+
+    def getPrecioPrimeraVez5(self):
+        return self.precioPrimeraVez5
+    
+    def setPrecioRenovacion2(self, precioRenovacion2):
+        self.precioRenovacion2 = precioRenovacion2
+
+    def getPrecioRenovacion2(self):
+        return self.precioRenovacion2
+    
+    def setPrecioRenovacion5(self, precioRenovacion5):
+        self.precioRenovacion5 = precioRenovacion5
+
+    def getPrecioRenovacion5(self):
+        return self.precioRenovacion5
+    
+    def setActivo(self, activo):
+        self.activo = activo
+    
+class persona:
+    def __init__(self):
+        self.nombre = ""
+        self.edad = 0
+        self.DNI = ""
+        self.esPrimeravez = True
+        self.niveles = []
+
+    def __init__(self, nombre, edad, DNI, esPrimeravez, niveles):
+        self.nombre = nombre
+        self.edad = edad
+        self.DNI = DNI
+        self.esPrimeravez = esPrimeravez
+        self.niveles = niveles
+
+    def setNombre(self, nombre):
+        self.nombre = nombre
+
+    def getNombre(self):
+        return self.nombre
+    
+    def setEdad(self, edad):
+        self.edad = edad
+
+    def getEdad(self):
+        return self.edad
+        
+    def setDNI(self, DNI):
+        self.DNI = DNI
+
+    def getDNI(self):
+        return self.DNI
+        
+    def setEsPrimeravez(self, esPrimeravez):
+        self.esPrimeravez = esPrimeravez
+
+    def getEsPrimeravez(self):
+        return self.esPrimeravez
+        
+    def setNiveles(self, niveles):
+        self.niveles = niveles
+
+    def getNiveles(self):
+        return self.niveles
