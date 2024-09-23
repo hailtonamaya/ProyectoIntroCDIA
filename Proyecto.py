@@ -289,7 +289,12 @@ class Main:
             
             # Verificar si ya existe la persona en la base de datos
             for p in Personas:
-                if p.getDNI() == DNI:
+                if p.getDNI() == DNI and edad>=18:
+                    p.setNombre(nombre)
+                    p.setEdad(edad)
+                    p.setAntecendentePenales(antedecentesPenales)
+                    p.setAntecedentesPoliciacos(antecedentesPoliciales)
+                    p.setExamenMedico(examenMedico)
                     personaActual = p
                     break
 
@@ -471,10 +476,24 @@ class Main:
                     else:
                         print("Usted seleccion un tipo de licencia invalida!!!")
                         press()
+            with open("Personas.pr", "wb") as file:
+                pickle.dump(Personas, file)
+            file.close()
             esValido = antedecentesPenales = antecedentesPoliciales = examenMedico = False
             Opcion = nombre = DNI = str("")
         
         elif Menu == "B":
+            nombre = input("Ingrese su nombre: ")
+            os.system('clear')
+            try:
+                edad = int(input("Ingrese su edad: "))
+            except ValueError:
+                print("Edad invalida. Por favor, ingrese un numero.")
+                press()
+                os.system('clear')
+                continue
+            os.system('clear')
+
             DNI = input("Ingrese su DNI(Sin guiones): ")
             if not DNI.isdigit():
                 print("DNI invalido. Por favor, ingrese solo numeros.")
@@ -483,13 +502,50 @@ class Main:
                 continue
             os.system('clear')
 
+            Opcion = input("Tiene antecedentes penales\n1.->Si\n2.->No\nSeleccion una opcion: ")
+            if not Opcion.isdigit():
+                print("Opcion invalida!")
+                press()
+                os.system('clear')
+                continue
+            if Opcion == "1":
+                antedecentesPenales = True
+            os.system('clear')
+            
+            Opcion = input("Tiene antecedentes policiales\n1.->Si\n2.->No\nSeleccion una opcion: ")
+            if not Opcion.isdigit():
+                print("Opcion invalida!")
+                press()
+                os.system('clear')
+                continue
+            if Opcion == "1":
+                antecedentesPoliciales = True
+            os.system('clear')
+
+            Opcion = input("Tiene examen medico\n1.->Si\n2.->No\nSeleccion una opcion: ")
+            if not Opcion.isdigit():
+                print("Opcion invalida!")
+                press()
+                os.system('clear')
+                continue
+            if Opcion == "1":
+                examenMedico = True
+            os.system('clear')            
+            
             # Verificar si ya existe la persona en la base de datos
             for p in Personas:
-                if p.getDNI() == DNI:
+                if p.getDNI() == DNI and edad>=18:
+                    p.setNombre(nombre)
+                    p.setEdad(edad)
+                    p.setAntecendentePenales(antedecentesPenales)
+                    p.setAntecedentesPoliciacos(antecedentesPoliciales)
+                    p.setExamenMedico(examenMedico)
                     personaActual = p
                     break
-
-            if personaActual != None:
+            if antedecentesPenales or antecedentesPoliciales or examenMedico == False:
+                print("Usted no puede solicitar una licencia de conducir porque tiene antecedentes penales, policiales o no tiene examen medico!!!")
+                press()
+            elif personaActual != None:
                 print("Bienvenido ", personaActual.getNombre())
                 print("A continuacion se muestra las licencias que necesitan renovacion: ")
                 for nivel in personaActual.getNiveles():
@@ -574,6 +630,8 @@ class Main:
             else:
                 print("Usted ha ingresado un DNI invalido o es la primera vez que solicita una licencia!")
                 press()
+            esValido = antedecentesPenales = antecedentesPoliciales = examenMedico = False
+            Opcion = nombre = DNI = str("")
         
         elif Menu == "C":
             DNI = input("Ingrese su DNI(Sin guiones): ")
