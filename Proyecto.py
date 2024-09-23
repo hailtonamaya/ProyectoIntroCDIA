@@ -79,8 +79,6 @@ class niveles:
         print("Precio Primera Vez 5 años: L.", self.precioPrimeraVez5)
         print("Precio Renovacion 2 años: L.", self.precioRenovacion2)
         print("Precio Renovacion 5 años: L.", self.precioRenovacion5)
-        print("Activo: ", self.activo)
-        print("Vencida: ", self.vencida ,"\n")
 
     def ImprimirActivo(self):
         if self.activo:
@@ -161,15 +159,6 @@ class Main:
     with open("Personas.pr", "rb") as file:
         Personas = pickle.load(file)
     file.close()        
-    
-    #Niveles[0].setActivo(True)
-    #Niveles[0].setVencida(False)
-    #Niveles[1].setActivo(True)
-    #Personas.append(persona("Hailton Amaya", "18", "0501200500100", False, Niveles))
-
-    #Niveles[0].setActivo(False)
-    #Niveles[0].setVencida(False)
-    #Personas.append(persona("Carlos Aguilar", "18", "0501200525258", False, Niveles))
 
     TiposAplica = []
     Menu = Opcion = str("")
@@ -448,6 +437,7 @@ class Main:
             else:
                 print("Usted ha ingresado un DNI invalido o es la primera vez que solicita una licencia!")
                 press()
+        
         elif Menu == "C":
             DNI = input("Ingrese su DNI(Sin guiones): ")
             if not DNI.isdigit():
