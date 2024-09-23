@@ -1,0 +1,32 @@
+Persona#1
+Nombre:  Hailton Ramiro Amaya Schrudner
+Edad:  19
+DNI:  0501200500100
+Es Primera Vez: No
+Antecedentes Penales: No
+Antecedentes Policiacos: No
+Examen Medico: Si
+Licencias: 
+-> Tipo A Vigente
+
+Persona#2
+Nombre: Juan Perez
+Edad: 54
+DNI: 0501197000283
+Antecedentes Penales: No
+Antecedentes Policiacos: No
+Examen Medico: Si
+Licencias: 
+-> Tipo A NO Vigente
+-> Tipo B NO Vigente
+
+Persona#3
+Nombre: Carlos Aguilar
+Edad: 18
+DNI: 0501200500258
+Antecedentes Penales: Si
+Antecedentes Policiacos: No
+Examen Medico: Si
+Licencias: 
+-> Tipo A NO Vigente
+-> Tipo B Vigente

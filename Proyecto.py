@@ -230,7 +230,7 @@ class Main:
 
     with open("Ingresos.ig", "rb") as file:
         Ingresos = pickle.load(file)
-    file.close()     
+    file.close()  
 
     print("****Bienvenido al DNVT para la Solicitud de la Licencia de Conducir****")
     while Menu != "E":
@@ -607,6 +607,7 @@ class Main:
                 print("")
             print("Total de ingresos: L.", total)
             press()
+        
         elif Menu == "E":
             print("Gracias por usar nuestro servicio!!!")
             press()
